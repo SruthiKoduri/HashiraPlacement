@@ -1,0 +1,41 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "json.hpp"
+
+using json = nlohmann::json;
+using namespace std;
+
+long long convertToDecimal(const string &value, int base) {
+    long long result = 0;
+    for (char c : value) {
+        int digit = 0;
+        if (c >= '0' && c <= '9') digit = c - '0';
+        else if (c >= 'a' && c <= 'f') digit = 10 + (c - 'a');
+        result = result * base + digit;
+    }
+    return result;
+}
+
+int main() {
+    ifstream file("input.json");
+    if (!file.is_open()) return 1;
+
+    json j;
+    file >> j;
+
+    int n = j["keys"]["n"];
+    int k = j["keys"]["k"];
+    cout << "n = " << n << ", k = " << k << endl;
+
+    for (int i = 1; i <= n; i++) {
+        string baseStr = j[to_string(i)]["base"];
+        string value = j[to_string(i)]["value"];
+        int base = stoi(baseStr);
+
+        long long decimalValue = convertToDecimal(value, base);
+        cout << "Root " << i << " in decimal: " << decimalValue << endl;
+    }
+
+    return 0;
+}
